@@ -2,7 +2,7 @@ import { IoMdPerson } from "react-icons/io";
 import { FaPhoneAlt } from "react-icons/fa";
 import s from "./Contact.module.css";
 
-const Contact = ({ id, name, number, deleteContact }) => {
+const Contact = ({ id, name, number, handleDeleteContact }) => {
   return (
     <div className={s.contactWrapper}>
       <ul className={s.infoList}>
@@ -16,7 +16,7 @@ const Contact = ({ id, name, number, deleteContact }) => {
       <button
         type="button"
         className={s.deleteBtn}
-        onClick={() => deleteContact(id)}
+        onClick={() => handleDeleteContact(id)}
       >
         Delete
       </button>

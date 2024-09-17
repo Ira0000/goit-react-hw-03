@@ -1,7 +1,7 @@
 import Contact from "../Contact/Contact";
 import s from "./Contact.List.module.css";
 
-const ContactList = ({ contactData, deleteContact }) => {
+const ContactList = ({ contactData, handleDeleteContact }) => {
   return (
     <ul className={s.contactCard}>
       {contactData.map((data) => {
@@ -11,7 +11,7 @@ const ContactList = ({ contactData, deleteContact }) => {
               id={data.id}
               name={data.name}
               number={data.number}
-              deleteContact={deleteContact}
+              handleDeleteContact={handleDeleteContact}
             />
           </li>
         );

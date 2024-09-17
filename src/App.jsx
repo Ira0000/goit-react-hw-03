@@ -3,6 +3,7 @@ import SearchBox from "./components/SearchBox/SearchBox";
 import ContactForm from "./components/ContactForm/ContactForm";
 
 import { useState } from "react";
+import { nanoid } from "nanoid";
 import "./App.css";
 
 const defaultContactData = [
@@ -15,13 +16,16 @@ const defaultContactData = [
 function App() {
   const [contactData, setContactData] = useState(defaultContactData);
   const [searchName, setSearchName] = useState("");
+  const [newContactData, setNewContactData] = useState("");
 
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
-    setContactData((prev) => {
+
+    setNewContactData((prev) => {
       return {
         ...prev,
         [name]: value,
+        id: nanoid(),
       };
     });
   };
@@ -34,26 +38,30 @@ function App() {
     contact.name.toLowerCase().includes(searchName.toLowerCase())
   );
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  const deleteContact = (id) => {
+  const handleDeleteContact = (id) => {
     setContactData((prev) => prev.filter((contact) => contact.id !== id));
     // console.log(`I want to delete this contact: ${id}`);
+  };
+
+  const handleAddContact = (e) => {
+    e.preventDefault();
+    console.log(newContactData);
+    setContactData((prev) => [...prev, newContactData]);
+    setNewContactData({ name: "", number: "", id: "" });
   };
 
   return (
     <div>
       <h1>Phonebook</h1>
       <ContactForm
-        handleSubmit={handleSubmit}
+        handleAddContact={handleAddContact}
         handleChangeInput={handleChangeInput}
+        newContactData={newContactData}
       />
       <SearchBox handleSearchInput={handleSearchInput} />
       <ContactList
         contactData={filteredContactData}
-        deleteContact={deleteContact}
+        handleDeleteContact={handleDeleteContact}
       />
     </div>
   );
