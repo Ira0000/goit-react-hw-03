@@ -2,8 +2,9 @@ import ContactList from "./components/ContactList/ContactList";
 import SearchBox from "./components/SearchBox/SearchBox";
 import ContactForm from "./components/ContactForm/ContactForm";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+
 import "./App.css";
 
 const defaultContactData = [
@@ -14,50 +15,43 @@ const defaultContactData = [
 ];
 
 function App() {
-  const [contactData, setContactData] = useState(defaultContactData);
+  const [contactData, setContactData] = useState(() => {
+    const savedData = JSON.parse(window.localStorage.getItem(`contactData`));
+    console.log(savedData);
+    if (savedData !== null) {
+      return savedData;
+    }
+    return defaultContactData;
+  });
   const [searchName, setSearchName] = useState("");
-  const [newContactData, setNewContactData] = useState("");
-
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-
-    setNewContactData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-        id: nanoid(),
-      };
-    });
-  };
 
   const handleSearchInput = (e) => {
     setSearchName(e.target.value);
   };
-  // console.log(searchName);
   const filteredContactData = contactData.filter((contact) =>
     contact.name.toLowerCase().includes(searchName.toLowerCase())
   );
 
   const handleDeleteContact = (id) => {
     setContactData((prev) => prev.filter((contact) => contact.id !== id));
-    // console.log(`I want to delete this contact: ${id}`);
   };
 
-  const handleAddContact = (e) => {
-    e.preventDefault();
-    console.log(newContactData);
-    setContactData((prev) => [...prev, newContactData]);
-    setNewContactData({ name: "", number: "", id: "" });
+  const handleAddContact = (values, actions) => {
+    const id = nanoid();
+    setContactData((prev) => [...prev, values]);
+    values.id = id;
+
+    actions.resetForm();
   };
+
+  useEffect(() => {
+    window.localStorage.setItem("contactData", JSON.stringify(contactData));
+  }, [contactData]);
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <ContactForm
-        handleAddContact={handleAddContact}
-        handleChangeInput={handleChangeInput}
-        newContactData={newContactData}
-      />
+      <ContactForm handleAddContact={handleAddContact} />
       <SearchBox handleSearchInput={handleSearchInput} />
       <ContactList
         contactData={filteredContactData}

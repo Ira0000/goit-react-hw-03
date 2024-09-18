@@ -1,34 +1,61 @@
+import { Field, Form, Formik, ErrorMessage } from "formik";
+import { nanoid } from "nanoid";
 import s from "./ContactForm.module.css";
+import * as Yup from "yup";
 
-const ContactForm = ({
-  handleAddContact,
-  handleChangeInput,
-  newContactData,
-}) => {
+const initialData = {
+  id: "",
+  name: "",
+  number: "",
+};
+
+const contactSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required!"),
+  number: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required!"),
+});
+
+const ContactForm = ({ handleAddContact }) => {
+  const nameFieldId = nanoid();
+  const numberFieldId = nanoid();
+
   return (
-    <form className={s.conactForm}>
-      <label className={s.formLable}>
-        Name
-        <input
-          type="text"
-          name="name"
-          onChange={handleChangeInput}
-          value={newContactData.name}
-        />
-      </label>
-      <label className={s.formLable}>
-        Number
-        <input
-          type="tel"
-          name="number"
-          onChange={handleChangeInput}
-          value={newContactData.number}
-        />
-      </label>
-      <button type="submit" onClick={handleAddContact} className={s.formBtn}>
-        Add contact
-      </button>
-    </form>
+    <Formik
+      initialValues={initialData}
+      onSubmit={handleAddContact}
+      validationSchema={contactSchema}
+    >
+      <Form className={s.conactForm}>
+        <div className={s.formFieldWrapper}>
+          <label htmlFor={nameFieldId}>Name</label>
+          <Field type="text" name="name" id={nameFieldId} />
+          <ErrorMessage
+            name="name"
+            component="span"
+            className={s.errorMessage}
+          />
+        </div>
+        <div className={s.formFieldWrapper}>
+          <label htmlFor={numberFieldId} className={s.formLable}>
+            Number
+          </label>
+          <Field type="tel" name="number" id={numberFieldId} />
+          <ErrorMessage
+            name="number"
+            component="span"
+            className={s.errorMessage}
+          />
+        </div>
+        <button type="submit" className={s.formBtn}>
+          Add contact
+        </button>
+      </Form>
+    </Formik>
   );
 };
 
