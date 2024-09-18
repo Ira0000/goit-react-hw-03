@@ -17,7 +17,6 @@ const defaultContactData = [
 function App() {
   const [contactData, setContactData] = useState(() => {
     const savedData = JSON.parse(window.localStorage.getItem(`contactData`));
-    console.log(savedData);
     if (savedData !== null) {
       return savedData;
     }
